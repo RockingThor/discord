@@ -1,13 +1,17 @@
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";
-import { ChanelType, MemberRole } from "@prisma/client";
+import { $Enums, ChanelType, MemberRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 import React from "react";
 import ServerHeader from "./server-header";
 import { ScrollArea } from "../ui/scroll-area";
 import ServerSearch from "./server-search";
 import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
+import { Separator } from "../ui/separator";
+import ServerSection from "./server-section";
+import ServerChannel from "./server-channel";
+import ServerMember from "./server-member";
 
 interface SeerverSidebarProps {
     serverId: string;
@@ -124,6 +128,105 @@ const ServerSidebar = async ({ serverId }: SeerverSidebarProps) => {
                         ]}
                     />
                 </div>
+                <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
+                {!!textChannels?.length && (
+                    <div className="mb-2">
+                        <ServerSection
+                            sectionType="channels"
+                            channelType={ChanelType.TEXT}
+                            role={role}
+                            label="Text Channels"
+                        />
+                        <div className="space-y-[2px]">
+                            {textChannels?.map((channel) => (
+                                <ServerChannel
+                                    key={channel.id}
+                                    channel={channel}
+                                    server={server}
+                                    role={role}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {!!audioChannels?.length && (
+                    <div className="mb-2">
+                        <ServerSection
+                            sectionType="channels"
+                            channelType={ChanelType.AUDIO}
+                            role={role}
+                            label="Voice Channels"
+                        />
+                        <div className="space-y-[2px]">
+                            {audioChannels?.map((channel) => (
+                                <ServerChannel
+                                    key={channel.id}
+                                    channel={channel}
+                                    server={server}
+                                    role={role}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {!!videoChannels?.length && (
+                    <div className="mb-2">
+                        <ServerSection
+                            sectionType="channels"
+                            channelType={ChanelType.VIDEO}
+                            role={role}
+                            label="Video Channels"
+                        />
+                        <div className="space-y-[2px]">
+                            {videoChannels?.map((channel) => (
+                                <ServerChannel
+                                    key={channel.id}
+                                    channel={channel}
+                                    server={server}
+                                    role={role}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {!!members?.length && (
+                    <div className="mb-2">
+                        <ServerSection
+                            sectionType="members"
+                            role={role}
+                            label="Members"
+                            server={server}
+                        />
+                        {members?.map(
+                            (
+                                member: {
+                                    id: string;
+                                    role: $Enums.MemberRole;
+                                    profileId: string;
+                                    serverId: string;
+                                    createdAt: Date;
+                                    updatedAt: Date;
+                                } & {
+                                    profile: {
+                                        id: string;
+                                        userId: string;
+                                        name: string;
+                                        imageUrl: string;
+                                        email: string;
+                                        createdAt: Date;
+                                        updated: Date;
+                                    };
+                                }
+                            ) => (
+                                <ServerMember
+                                    key={member.id}
+                                    server={server}
+                                    member={member}
+                                />
+                            )
+                        )}
+                    </div>
+                )}
             </ScrollArea>
         </div>
     );

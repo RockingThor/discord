@@ -48,19 +48,28 @@ const formSchema = z.object({
 });
 
 const CreateChannelModal = () => {
-    const { isOpen, onClose, type } = useModal();
+    const { isOpen, onClose, type, data } = useModal();
     const router = useRouter();
     const params = useParams();
 
     const isModalOpen = isOpen && type == "createChannel";
+    const { channelType } = data;
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            type: ChanelType.TEXT,
+            type: channelType || ChanelType.TEXT,
         },
     });
+
+    useEffect(() => {
+        if (channelType) {
+            form.setValue("type", channelType);
+        } else {
+            form.setValue("type", ChanelType.TEXT);
+        }
+    }, [channelType, form]);
 
     const isLoading = form.formState.isSubmitting;
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
