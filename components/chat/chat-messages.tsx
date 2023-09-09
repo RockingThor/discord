@@ -4,6 +4,10 @@ import React, { Fragment } from "react";
 import ChatWelcome from "./chat-welcome";
 import { useChatQuery } from "@/hooks/use-chat-query";
 import { Loader2, ServerCrash } from "lucide-react";
+import ChatItem from "./chat-item";
+import { format } from "date-fns";
+
+const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 type MessagWithMemberWithProfile = Message & {
     member: Member & {
@@ -70,12 +74,25 @@ const ChatMessages = ({
                         <Fragment key={i}>
                             {group.items.map(
                                 (message: MessagWithMemberWithProfile) => (
-                                    <div
-                                        className=""
+                                    <ChatItem
                                         key={message.id}
-                                    >
-                                        {message.content}
-                                    </div>
+                                        currentMember={member}
+                                        member={message.member}
+                                        id={message.id}
+                                        content={message.content}
+                                        fileUrl={message.fileUrl}
+                                        deleted={message.deleted}
+                                        timestamp={format(
+                                            new Date(message.createdAt),
+                                            DATE_FORMAT
+                                        )}
+                                        isUpdated={
+                                            message.updatedAt !==
+                                            message.createdAt
+                                        }
+                                        socketUrl={socketUrl}
+                                        socketQuery={socketQuery}
+                                    />
                                 )
                             )}
                         </Fragment>
