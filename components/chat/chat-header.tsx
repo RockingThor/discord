@@ -1,9 +1,12 @@
-import { Hash } from "lucide-react";
+"use client";
+import { Github, Hash, Linkedin } from "lucide-react";
 import React from "react";
 import MobileToggle from "../mobile-toggle";
 import UserAvatar from "../user-avatar";
 import SocketIndicator from "../socket-indicator";
 import { ChatVideoButton } from "./chat-video-button";
+
+import { redirect } from "next/navigation";
 
 interface ChatHeaderProps {
     serverId: string;
@@ -29,6 +32,28 @@ const ChatHeader = ({ serverId, name, type, imageUrl }: ChatHeaderProps) => {
                 {name}
             </p>
             <div className="ml-auto flex items-center">
+                <button
+                    className="p-3"
+                    onClick={() => {
+                        window.open(
+                            "https://github.com/RockingThor/discord",
+                            "_blank"
+                        );
+                    }}
+                >
+                    <Github />
+                </button>
+                <button
+                    className="p-3"
+                    onClick={() => {
+                        window.open(
+                            "https://www.linkedin.com/in/rohitnandi/",
+                            "_blank"
+                        );
+                    }}
+                >
+                    <Linkedin />
+                </button>
                 {type === "conversation" && <ChatVideoButton />}
                 <SocketIndicator />
             </div>
